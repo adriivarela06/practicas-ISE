@@ -11,7 +11,7 @@
 
 ## Sesión 1:
 
-Hemos instalado el sistema operativo ***Debian*** en una máquina virtual, configurando así las particiones de tal forma que, usando el comando ```lsblk```, vemos que se nos queda el árbol de memoria que tenemos a continuación:
+Hemos instalado el sistema operativo ***Debian*** en una máquina virtual, configurando así las particiones y creando una serie de **RAID1** de tal forma que, usando el comando ```lsblk```, vemos que se nos queda el árbol de memoria que tenemos a continuación:
 
 <img width="2560" height="1329" alt="Captura desde 2026-09-24 21-42-29" src="https://github.com/user-attachments/assets/0cb120b5-c5b1-4555-a44c-e66168821c81" />
 
@@ -36,7 +36,7 @@ Para probarlo hemos hecho un test con el comando ```ping```, probando así que s
 
 Al igual que en la sesión 3, hemos creado una nueva máquina virtual nueva con la instalación del sistema operativo ***Alma*** por defecto.
 
-Esta vez nuestro objetivo era hacer lo mismo que en la sesión anterior, es decir, agrandar el tamaño del directorio ```/var``` utilizando un volumen físico, pero esta vez, además de esto vamos a cifrarlo.
+Esta vez nuestro objetivo era hacer lo mismo que en la sesión anterior, es decir, agrandar el tamaño del directorio ```/var``` utilizando un **RAID1** y además cifrandolo.
 
 Para ello hemos ejecutado todos estos comandos en la terminal, los cuáles vemos utilizando el comando ```history```:
 
@@ -48,7 +48,7 @@ Para ello hemos ejecutado todos estos comandos en la terminal, los cuáles vemos
 
 <img width="1920" height="969" alt="Captura desde 2026-10-01 17-17-12" src="https://github.com/user-attachments/assets/26a6f029-fb17-4977-9030-ba35c626b4fa" />
 
-Además, también hemos modificado el archivo ```fstab```, para que el punto de montaje de nuestro nuevo volumen físico sea en ```/var```, y también el archivo ```crypttab``` para que cuando iniciemos la máquina se nos pida la clave de desencriptado, teniendo así nuestra carpeta ```/var``` lista para su uso al encender la máquina. 
+Además, también hemos modificado el archivo ```fstab```, para que el punto de montaje de nuestro **RAID1** sea en ```/var```, y también el archivo ```crypttab``` para que cuando iniciemos la máquina se nos pida la clave de desencriptado, teniendo así nuestra carpeta ```/var``` lista para su uso al encender la máquina. 
 
 Si no hiciéramos esto, cada vez que encendieramos la máquina tendriamos que hacer el comando ```cryptsetup luksOpen /dev/mapper/vgraid-newvar vgraid-newvar_open```
 
