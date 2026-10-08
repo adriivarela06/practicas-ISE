@@ -65,8 +65,15 @@
 
   ## Sesión 1:
 
-  En esta sesión lo que hemos hecho ha sido configurar el ```ssh``` en las máquinas ***AlmaRaid*** y ***Debian***, así como algunas medidas de seguridad que voy a describir a continuación.
+  En esta sesión lo que hemos hecho ha sido configurar el servicio ```ssh``` en las máquinas ***AlmaRaid*** y ***Debian***, así como algunas medidas de seguridad que voy a describir a continuación.
 
-  Al instalar ```ssh``` en ambas máquinas, hemos editado el archivo de configuración ```/etc/ssh/ssh_config``` cambiando así el puerto por defecto al **22022** y prohibiendo el acceso al usuario raíz mediante ```ssh```, aunque en ***Alma*** hemos tenido que utilizar un comando que se nos indicaba en este archivo para hacerlo funcionar.
+  Al instalar ```ssh``` en ambas máquinas, hemos editado el archivo de configuración ```/etc/ssh/sshd_config``` cambiando así el puerto por defecto al **22022** y prohibiendo el acceso al usuario **root** mediante ```ssh```, aunque en ***Alma*** hemos tenido utilizar un comando que se nos indicaba en este archivo para hacer funcionar el nuevo puerto, además de abrir este puerto en el **firewall** con el comando ```semanage```.
 
-  A continuación hemos ejecutado ell comando ```ssh-keygen``` para crear claves de acceso, y las hemos compartido entre ambas máquinas con el comando ```ssh-copy-id USUARIO@#IP -p 22022```.
+  A continuación hemos ejecutado ell comando ```ssh-keygen``` para crear claves de acceso, y las hemos compartido entre ambas máquinas con el comando ```ssh-copy-id USUARIO@IP -p 22022```, siendo ```USUARIO``` a quien le quieres compartir clave del PC con dirección ```IP```. Esto lo hemos hecho para poder conectar las máquinas sin falta de que estemos poniendo la contraseña cada vez que accedamos.
+
+<img width="1142" height="772" alt="Captura desde 2026-10-08 17-07-57" src="https://github.com/user-attachments/assets/3226f53e-388e-464e-8898-301b18442cc8" />
+
+Por último nos hemos descargado ```fail2ban``` para establecer los mecanismos extra de seguridad que he comentado antes. Para aplicar nuesta configuración de seguridad hemos copiado el contenido de  ```/etc/fail2ban/jail.conf``` en ```/etc/fail2ban/jail.local```, y una vez dentro, hemos activado las restricciones de ```ssh``` logrando así que después de un número de intentos de inicio de sesión, se bloquee la IP durante un cierto periodo de tiempo.
+
+<img width="1920" height="969" alt="Captura desde 2026-10-08 17-15-44" src="https://github.com/user-attachments/assets/4ba4e115-96df-4479-8c20-1518b7867151" />
+
