@@ -77,3 +77,19 @@ Por último nos hemos descargado ```fail2ban``` para establecer los mecanismos e
 
 <img width="1920" height="969" alt="Captura desde 2026-10-08 17-15-44" src="https://github.com/user-attachments/assets/4ba4e115-96df-4479-8c20-1518b7867151" />
 
+  ## Sesión 2
+
+  En esta sesión hemos creado una ```lamp``` tanto en ***Alma*** como en ***Debian***.
+
+  En ***Debian*** nos hemos instalado ```tasksel```, a través del cual nos hemos podido instalar ```apache2```, y una vez tenemos esto hecho lo único que hay que hacer es arrancar el proceso con ```systemctl start apache2``` y, poniendo nuestra **IP** en nuestro navegador, comprobamos que efectivamente nuestro servidor web está funcionando.
+
+  En ***Alma*** hemos instalado los servicios ```httpd```, ```php```, ```mariadb``` (mysql), y ```mariadb-server``` para poder alojar nuestro servidor en la máquina. Una vez tenemos todo instalado arrancamos los procesos con ```systemctl start nombre_proceso``` y si es necesario los activamos con ```systemctl enable nombre_proceso```.
+
+Una vez tenemos todos los procesos funcionando, al igual que con ***Debian*** comprobamos en nuestro navegador si tenemos funcionando nuestro servidor web poniendo la **IP** de la máquina.
+
+A continuación hemos creado el fichero ```/var/www/html/index.php``` para hacer una serie de pruebas en nuestro servidor, y para que se vean los cambios desde el navegador, reiniciamos el servicio ```httpd```.
+
+<img width="1920" height="969" alt="Captura desde 2026-10-15 16-27-57" src="https://github.com/user-attachments/assets/def1b2d3-262f-44e3-982b-336865ee9669" />
+
+<img width="1920" height="969" alt="Captura desde 2026-10-15 16-28-05" src="https://github.com/user-attachments/assets/3773e98b-051b-4cf9-9a36-f2de9ddbc064" />
+
