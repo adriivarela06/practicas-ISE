@@ -71,11 +71,11 @@
 
   A continuación hemos ejecutado ell comando ```ssh-keygen``` para crear claves de acceso, y las hemos compartido entre ambas máquinas con el comando ```ssh-copy-id USUARIO@IP -p 22022```, siendo ```USUARIO``` a quien le quieres compartir clave del PC con dirección ```IP```. Esto lo hemos hecho para poder conectar las máquinas sin falta de que estemos poniendo la contraseña cada vez que accedamos.
 
-<img width="1142" height="772" alt="Captura desde 2026-10-08 17-07-57" src="https://github.com/user-attachments/assets/3226f53e-388e-464e-8898-301b18442cc8" />
+  <img width="1142" height="772" alt="Captura desde 2026-10-08 17-07-57" src="https://github.com/user-attachments/assets/3226f53e-388e-464e-8898-301b18442cc8" />
 
-Por último nos hemos descargado ```fail2ban``` para establecer los mecanismos extra de seguridad que he comentado antes. Para aplicar nuesta configuración de seguridad hemos copiado el contenido de  ```/etc/fail2ban/jail.conf``` en ```/etc/fail2ban/jail.local```, y una vez dentro, hemos activado las restricciones de ```ssh``` logrando así que después de un número de intentos de inicio de sesión, se bloquee la IP durante un cierto periodo de tiempo.
+  Por último nos hemos descargado ```fail2ban``` para establecer los mecanismos extra de seguridad que he comentado antes. Para aplicar nuesta configuración de seguridad hemos copiado el contenido de  ```/etc/fail2ban/jail.conf``` en ```/etc/fail2ban/jail.local```, y una vez dentro, hemos activado las restricciones de ```ssh``` logrando así que después de un número de intentos de inicio de sesión, se bloquee la IP durante un cierto periodo de tiempo.
 
-<img width="1920" height="969" alt="Captura desde 2026-10-08 17-15-44" src="https://github.com/user-attachments/assets/4ba4e115-96df-4479-8c20-1518b7867151" />
+  <img width="1920" height="969" alt="Captura desde 2026-10-08 17-15-44" src="https://github.com/user-attachments/assets/4ba4e115-96df-4479-8c20-1518b7867151" />
 
   ## Sesión 2
 
@@ -85,11 +85,22 @@ Por último nos hemos descargado ```fail2ban``` para establecer los mecanismos e
 
   En ***Alma*** hemos instalado los servicios ```httpd```, ```php```, ```mariadb``` (mysql), y ```mariadb-server``` para poder alojar nuestro servidor en la máquina. Una vez tenemos todo instalado arrancamos los procesos con ```systemctl start nombre_proceso``` y si es necesario los activamos con ```systemctl enable nombre_proceso```.
 
-Una vez tenemos todos los procesos funcionando, al igual que con ***Debian*** comprobamos en nuestro navegador si tenemos funcionando nuestro servidor web poniendo la **IP** de la máquina.
+  Una vez tenemos todos los procesos funcionando, al igual que con ***Debian*** comprobamos en nuestro navegador si tenemos funcionando nuestro servidor web poniendo la **IP** de la máquina.
 
-A continuación hemos creado el fichero ```/var/www/html/index.php``` para hacer una serie de pruebas en nuestro servidor, y para que se vean los cambios desde el navegador, reiniciamos el servicio ```httpd```.
+  A continuación hemos creado el fichero ```/var/www/html/index.php``` para hacer una serie de pruebas en nuestro servidor, y para que se vean los cambios desde el navegador, reiniciamos el servicio ```httpd```.
 
-<img width="1920" height="969" alt="Captura desde 2026-10-15 16-27-57" src="https://github.com/user-attachments/assets/def1b2d3-262f-44e3-982b-336865ee9669" />
+  <img width="1920" height="969" alt="Captura desde 2026-10-15 16-27-57" src="https://github.com/user-attachments/assets/def1b2d3-262f-44e3-982b-336865ee9669" />
 
-<img width="1920" height="969" alt="Captura desde 2026-10-15 16-28-05" src="https://github.com/user-attachments/assets/3773e98b-051b-4cf9-9a36-f2de9ddbc064" />
+  <img width="1920" height="969" alt="Captura desde 2026-10-15 16-28-05" src="https://github.com/user-attachments/assets/3773e98b-051b-4cf9-9a36-f2de9ddbc064" />
 
+  ## Sesión 3
+  
+  En esta práctica hemos aprendido principalmente a utilizar ```git```, además de ```dd```, ```cp```, ```tar``` y ```rsync``` entre otras utilidades más.
+  
+  Dentro de la máquina ***Debian*** hemos ido aprendiendo poco a poco las operaciones más importantes de ```git```, como lo son ```git init```, ```git add```, ```git commit``` y ```git status``` entre algunas otras, y a su vez hemos creado,  modificado, y subido a la nube de ```github``` el repositorio ```gta6```.
+
+  Hemos aprendido también a crear nuevas ramas dentro del repositorio con el comando ```git branch <nombre>```, a cambiar de rama con ```git checkout <nombre>```, y a fusionarlas con ```git merge<nombre>```.
+
+  Por último, dejo aquí abajo una imagen con los ```commit``` que he ido haciendo en la clase, véase que he hecho pocos ```commit``` debido a que ya había utilizado ```git``` con anterioridad y me sabía la mayoría de los comandos vistos en la práctica.
+
+  <img width="1920" height="969" alt="Git" src="https://github.com/user-attachments/assets/19edf2a0-efb2-4259-9a36-b7748ca8d64d" />
