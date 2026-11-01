@@ -130,11 +130,6 @@
   ### Instalación zabbix ***Alma***
 
 
-
-  ### Configuración web zabbix
-
-
-
   
   ### Configuración de la web zabbix
 
