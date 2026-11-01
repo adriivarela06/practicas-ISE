@@ -104,3 +104,44 @@
   Por último, dejo aquí abajo una imagen con los ```commit``` que he ido haciendo en la clase, véase que he hecho pocos ```commit``` debido a que ya había utilizado ```git``` con anterioridad y me sabía la mayoría de los comandos vistos en la práctica.
 
   <img width="1920" height="969" alt="Git" src="https://github.com/user-attachments/assets/19edf2a0-efb2-4259-9a36-b7748ca8d64d" />
+
+---
+
+# Práctica 3
+
+  ## Sesión 1
+
+  ### Simulación de desconexión y reconexión de una parte del **RAID0** en ***Debian***
+
+  Esta prueba la hemos hecho para simular un accidente hardware que nos podría ocurrir en la vida real, el cual es que nos deje de funcionar uno de los discos de un **RAID0**. 
+  
+  Provocamos un fallo software en el disco ```/dev/sdb2```, el cual pertenece a nuestro raid ```md1```, con el comando ```sudo mdadm --manage --set-faulty /dev/md1 /dev/sdb2```, y al revisar el archivo ```/proc/mdstat``` podemos comprobar que se nos ha desconectado del raid, por lo que nuestro disco ha quedado expuesto a que si hay otro fallo perdamos todos los datos permanentemente.
+  
+  Para arreglarlo lo que vamos a hacer es primero eliminar y luego volver a conectar nuestro disco al raid con los comandos ```sudo mdadm -r /dev/md1 /dev/sdb2``` y ```sudo mdadm -a /dev/md1 /dev/sdb2```.
+
+  Por último, para comprobar que ha funcionado el montaje del raid, ejecutamos el comando ```watch -n 1 cat /proc/mdstat``` para ir viendo en tiempo real el porcentaje de los datos que se han copiado de una unidad a otra.
+
+  <img width="2560" height="1329" alt="Captura desde 2026-10-31 18-56-05" src="https://github.com/user-attachments/assets/17c1b991-cfef-4281-bf2c-70ae252e2664" />
+
+  ### Instalación zabbix ***Debian***
+
+  
+
+  ### Instalación zabbix ***Alma***
+
+
+
+  ### Configuración web zabbix
+
+
+
+  
+  ### Configuración de la web zabbix
+
+
+
+  ### Simulación de caída del servicio **HTTP**
+
+
+
+  ### Problemas que me han surgido por el camino
