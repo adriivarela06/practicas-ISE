@@ -123,20 +123,123 @@
 
   <img width="2560" height="1329" alt="Captura desde 2026-10-31 18-56-05" src="https://github.com/user-attachments/assets/17c1b991-cfef-4281-bf2c-70ae252e2664" />
 
-  ### Instalación zabbix ***Debian***
+  ### Instalación **ZABBIX** ***Debian***
 
+  Para realizar la instalación del servidor **ZABBIX** y su agente en la máquina ***Debian***, lo que vamos a hacer es seguir todos los pasos que se nos indica en su web, teniendo en cuenta que utilizamos la base de datos mysql(mariadb) y servidor apache:
   
+    wget https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.4+debian13_all.deb
+    dpkg -i zabbix-release_latest_7.4+debian13_all.deb
+    apt update
+    
+    apt install zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent
 
-  ### Instalación zabbix ***Alma***
+    mysql -uroot -p
+    password
+    mysql> create database zabbix character set utf8mb4 collate utf8mb4_bin;
+    mysql> create user zabbix@localhost identified by 'password';
+    mysql> grant all privileges on zabbix.* to zabbix@localhost;
+    mysql> set global log_bin_trust_function_creators = 1;
+    mysql> quit;
+    
+    zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -uzabbix -p zabbix
 
+    mysql -uroot -p
+    password
+    mysql> set global log_bin_trust_function_creators = 0;
+    mysql> quit;
 
+    Editar archivo /etc/zabbix/zabbix_server.conf:
+    DBPassword=practicas,ise
+    
+    Por último ejecutamos los siguientes comandos:
+    systemctl restart zabbix-server zabbix-agent apache2
+    systemctl enable zabbix-server zabbix-agent apache2
+
+  <img width="1722" height="1203" alt="Captura desde 2026-11-01 13-28-15" src="https://github.com/user-attachments/assets/f568bf20-f722-4a81-a1ff-aaa198f36f08" />
+  <img width="1722" height="1203" alt="Captura desde 2026-11-01 13-28-29" src="https://github.com/user-attachments/assets/3ce37f90-57c1-486c-a814-36c47cc0faca" />
+
+  Una vez tenemos instalado todo, nos metemos desde nuestro navegador y buscamos ```http://192.168.56.105/zabbix```, la cual es la URL de nuestro servidor **ZABBIX**.
+
+  <img width="2560" height="1329" alt="Captura desde 2026-11-01 13-28-58" src="https://github.com/user-attachments/assets/54888cb0-8a9f-4a2b-be88-bc0e52dc3a02" />
   
-  ### Configuración de la web zabbix
+  Cuando tengamos ya nuestra web iniciada, iniciamos sesion con las credenciales ```Usuario = Admin``` y ```Constraseña = zabbix```, e inmediatamente cambiamos la contraseña para asegurarnos que nadie entre de una forma maliciosa.
 
+  ### Instalación **ZABBIX** ***Alma***
 
+  Ahora, en nuestra máquina ***Alma***, únicamente vamos a instalar el agente de **ZABBIX** de nuevo siguiedo los pasos que se nos indican en la web: 
+
+    Comprobamos la versión de Alma que tenemos con:
+    cat /etc/redhat-release
+    
+    Editamos el archivo /etc/yum.repos.d/epel.repo y añadimos lo siguiente:
+    [epel]
+    ...
+    excludepkgs=zabbix*
+
+    Después ejecutamos los siguientes comandos:    
+    rpm -Uvh https://repo.zabbix.com/zabbix/7.4/release/alma/10/noarch/zabbix-release-latest-7.4.el10.noarch.rpm
+    dnf clean all
+
+    dnf install zabbix-agent
+
+    systemctl restart zabbix-agent
+    systemctl enable zabbix-agent
+    
+    Una vez que tenemos ZABBIX vamos a configurar en Alma el agente cambiando las siguentes lineas en el archivo /etc/zabbix/zabbix_agentd.conf:
+    Server=192.168.56.105
+    ServerActive=192.168.56.105
+    Hostname=AlmaRaid
+
+    Ahora, como zabbix tiene como puerto predeterminado el 10050, ejecutamos el siguiente comando en ALMA para poder utilizarlo:
+    sudo firewall-cmd --add-port=10050/tcp --permanent
+    sudo firewall-cmd --reload
+
+  <img width="1320" height="1369" alt="Captura desde 2026-11-01 13-38-47" src="https://github.com/user-attachments/assets/1f840cba-bee9-4a45-a2fe-e1d4aff435b3" />
+  
+  ### Configuración de la web **ZABBIX**
+
+  Ahora para configurar nuestra web **ZABBIX** y poder monitorear nuestra máquina ***Debian*** y ***Alma***, mientras que para nuestra máquina ***Debian*** no hemos tenido que hacer nada porque ya viene por defecto, para nuestra máquina ***Alma*** la hemos tenido que dar de alta como host poniendo su respectiva IP y el *Puerto 10050*, ya que es el predeterminado que se utiliza para **ZABBIX**, como grupo le ponemos *Linux servers*, y como plantilla *Linux by Zabbix agent*.
+
+  <img width="1920" height="969" alt="Captura desde 2026-11-01 20-25-59" src="https://github.com/user-attachments/assets/12d538b9-1a83-4d2e-902b-41cce687a264" />
+
+  A continuación, para controlar los puertos **SSH** y **HTTP** hemos añadido dos métricas:
+  
+  Estado del servicio **SSH**: es del tipo comprobación sencilla con clave ```net.wqztcp.service[ssh,,22022]```, dejando ese hueco libre para que se utilice la IP que tenemos por defecto en el host, y ponemos 22022 porque es el puerto que habíamos establecido como predeterminado para este servicio.
+  
+  Estado del servicio **HTTP**: es del tipo comprobación sencilla y su clave es ```net.tcp.service[http]```, y en este no cambiamos el puerto porque no lo habíamos tocado anteriormente.
+
+  <img width="1210" height="130" alt="Captura desde 2026-11-01 20-27-32" src="https://github.com/user-attachments/assets/549a0c26-be25-4903-b42b-2315a7240aa9" />
+
+  Además también vamos a añadir dos iniciadores para que de un aviso de cuando un servicio se caiga:
+  
+  Servicio **SSH** caído en AlmaRaid: Expresión ```last(/AlmaRaid/net.tcp.service[ssh,,22022])=0``` y *Severidad Alta*.
+  
+  Servicio **HTTP** caído en AlmaRaid: Expresión ```last(/AlmaRaid/net.tcp.service[http])=0``` y *Severidad Alta*.
+
+  <img width="1308" height="80" alt="Captura desde 2026-11-01 20-29-25" src="https://github.com/user-attachments/assets/ecd4cb5b-54b0-4fda-91cf-5fd4213b9e17" />
+  <img width="1308" height="77" alt="Captura desde 2026-11-01 20-30-29" src="https://github.com/user-attachments/assets/bcc4a2be-cf64-4dbc-b122-92b66d6732d0" />
 
   ### Simulación de caída del servicio **HTTP**
 
+  Primero comprobamos los últimos valores que tenemos registrados de las conexiones a los servicios **SSH** y **HTTP** para ver que estén ambos funcionando.
 
+  <img width="1920" height="969" alt="Captura desde 2026-11-01 20-33-09" src="https://github.com/user-attachments/assets/4c407d95-3680-4a45-9fa0-12d78895ec09" />
+
+  <img width="1920" height="969" alt="Captura desde 2026-11-01 20-33-17" src="https://github.com/user-attachments/assets/4714dca3-e715-4247-8c77-dd4aae73df54" />
+
+  A continuación apagamos el servicio **HTTP** con el comando ```sudo systemctl stop httpd``` para simular la caída, y comprobamos en nuestro panel principal de la web **ZABBIX** que nos ha saltado el error.
+
+  <img width="1920" height="969" alt="Captura desde 2026-11-01 20-36-07" src="https://github.com/user-attachments/assets/ec256693-4f0b-4bd3-bac3-cb6b8728ab68" />
+
+  Por último encendemos de nuevo el servicio con el comando ```sudo systemctl start httpd``` y comprobamos que en nuestro panel se ha quitado la alerta del fallo y nos sale como resuelto.
+
+  <img width="1920" height="969" alt="Captura desde 2026-11-01 20-38-13" src="https://github.com/user-attachments/assets/ed03d57e-f5f6-4af6-a818-c1f844bc1c64" />
 
   ### Problemas que me han surgido por el camino
+
+  Al instalar el agente en ***Alma***, hemos tenido que modificar el archivo ```/etc/zabbix/zabbix_agentd.conf``` para establecer como servidor de **ZABBIX** predeterminado el de nuestra máquina ***Debian***.
+
+  En la métrica **SSH**, al poner ```net.tcp.service[ssh]``` y probarla nos daba error, por lo que tuvimos que modificarla añadiendo el puerto que habíamos cambiado por defecto quedándose así: ```net.tcp.service[ssh,,22022]```.
+
+  Al configurar el agente **ZABBIX**, nos hemos topado con que el puerto 10050 no funcionaba (puerto por defecto de **ZABBIX**), por lo que hemos tenido que abrir en el firewall para que pueda comunicarse con el agente y viceversa.
+  
