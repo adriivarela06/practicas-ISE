@@ -11,7 +11,7 @@
 
 # Práctica 1
 
-  ## Sesión 1:
+  ## Lección 1:
   
   Hemos instalado el sistema operativo ***Debian*** en una máquina virtual, configurando así las particiones y creando una serie de **RAID1** de tal forma que, usando el comando ```lsblk```, vemos que se nos queda el árbol de memoria que tenemos a continuación:
   
@@ -19,7 +19,7 @@
   
 ---
   
-  ## Sesión 2:
+  ## Lección 2:
   
   En otra máquina virtual, hemos instalado esta vez el sistema operativo ***Alma*** por defecto.
   
@@ -35,7 +35,7 @@
   
 ---
   
-  ## Sesión 3:
+  ## Lección 3:
   
   Al igual que en la sesión 3, hemos creado una nueva máquina virtual nueva con la instalación del sistema operativo ***Alma*** por defecto.
   
@@ -63,7 +63,7 @@
 
 # Práctica 2
 
-  ## Sesión 1:
+  ## Lección 1:
 
   En esta sesión lo que hemos hecho ha sido configurar el servicio ```ssh``` en las máquinas ***AlmaRaid*** y ***Debian***, así como algunas medidas de seguridad que voy a describir a continuación.
 
@@ -77,7 +77,7 @@
 
   <img width="1920" height="969" alt="Captura desde 2026-10-08 17-15-44" src="https://github.com/user-attachments/assets/4ba4e115-96df-4479-8c20-1518b7867151" />
 
-  ## Sesión 2
+  ## Lección 2
 
   En esta sesión hemos creado una ```lamp``` tanto en ***Alma*** como en ***Debian***.
 
@@ -93,7 +93,7 @@
 
   <img width="1920" height="969" alt="Captura desde 2026-10-15 16-28-05" src="https://github.com/user-attachments/assets/3773e98b-051b-4cf9-9a36-f2de9ddbc064" />
 
-  ## Sesión 3
+  ## Lección 3
   
   En esta práctica hemos aprendido principalmente a utilizar ```git```, además de ```dd```, ```cp```, ```tar``` y ```rsync``` entre otras utilidades más.
   
@@ -109,7 +109,7 @@
 
 # Práctica 3
 
-  ## Sesión 1
+  ## Lección 1
 
   ### Simulación de desconexión y reconexión de una parte del **RAID0** en ***Debian***
 
@@ -242,4 +242,24 @@
   En la métrica **SSH**, al poner ```net.tcp.service[ssh]``` y probarla nos daba error, por lo que tuvimos que modificarla añadiendo el puerto que habíamos cambiado por defecto quedándose así: ```net.tcp.service[ssh,,22022]```.
 
   Al configurar el agente **ZABBIX**, nos hemos topado con que el puerto 10050 no funcionaba (puerto por defecto de **ZABBIX**), por lo que hemos tenido que abrir en el firewall para que pueda comunicarse con el agente y viceversa.
+
+  ## Lección 2
+
+  En esta lección, hemos aprendido como levantar un servicio de monitorización de discos RAID automatizado localmente en ***Debian***, y la configuración de ```ansible``` para ejecutar tareas remotas en ***AlmaRaid***.
+
+  Para automatizar la revisión del estado de nuestros RAIDs sin depender de ```cron```, se nos han dado tres ficheros llamados ```mon_raid```, uno con extensión *.py*, otro con *.service*, y otro con *.timer*, los cuales he enviado a la máquina ***Debian*** haciendo uso del servicio ```scp /ruta/local/archivo usuario@ip_remota:/ruta/destino/```.
   
+Una vez que ya tenemos los archivos en nuestra máquina ***Debian***, usando la herramienta ```systemctl```, habilitamos primero nuestro ```mon_raid.timer```, el cual es el trigger de ```mon_raid.system```, con el comando ```sudo systemctl enable mon_raid.timer```. Por último habilitamos y arrancamos nuestro sistema ```mon_raid.system```, el cual nos ejecuta el fichero ```mon_raid.py```, con los comandos ```sudo systemctl enable mon_raid``` y ```sudo systemctl start mon_raid```.
+
+Ahora, para ver que todo está funcionando correctamente ejecutamos ```sudo systemctl status mon_raid.timer``` y ```sudo systemctl status mon_raid.timer```, y después, para ver si se ha ejecutado nuestro servicio y sus salidas, ejecutamos ```sudo journaltrl -u mon_raid```.
+
+<img width="1920" height="969" alt="Captura desde 2026-11-05 16-07-25" src="https://github.com/user-attachments/assets/a27461af-9188-4fe6-9197-94d5f22fbc19" />
+<img width="1762" height="939" alt="Captura desde 2026-11-08 20-20-30" src="https://github.com/user-attachments/assets/acfac4b8-0a0e-4a04-a5b0-28dce0f5aacd" />
+
+A continuación, hemos instalado el servicio ```ansible```, el cual sirve para ejecutar comandos en varias máquinas al mismo tiempo desde solamente una. Inmediatamente ejecutamos el comando ```sudo ansible-config init >> /etc/ansible/ansible.conf``` para poder modificar los parámetros del servicio a nuestro gusto dentro de su archivo de configuración.
+
+Después, hemos creado un fichero ```hosts``` con las IPs de las máquinas en las que queremos ejecutar los comandos, siendo estas IPs las de ***Debian*** y ***AlmaRaid***. Una vez que tenemos nuestro fichero, para que funcione el comando ```ansible``` hemos tenido que exportar desde la máquina ***Debian*** a si misma su clave pública de **SSH**, y la de ***AlmaRaid*** no ha hecho falta porque ya la habíamos exportado en una lección anterior.
+
+Una vez tenemos todo configurado, hemos probado que funcionara con ```ansible -i hosts all -m ping```, y hemos pasado con ```scp``` el archivo ```mon_raid.py``` a la máquina ***AlmaRaid*** para poder ejecutarlo de forma remota. Por último, hemos ejecutado ```ansible -i hosts all -a "/home/adrian/mon_raid.py"``` y comprobado que los resultados son los que esperamos.
+
+<img width="1762" height="939" alt="Captura desde 2026-11-08 12-55-21" src="https://github.com/user-attachments/assets/e3385fa1-a0f8-4a94-8c02-e3d878896222" />
